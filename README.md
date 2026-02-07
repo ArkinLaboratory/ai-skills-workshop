@@ -8,7 +8,8 @@ Part of the [Arkin Lab Hack-a-thon](https://github.com/ArkinLaboratory/handbook/
 
 | Folder | Contents |
 |--------|----------|
-| `docs/` | Concepts: what are skills, MCPs, how they differ |
+| `ai-resources/` | Setup guides for Claude, CBORG, and Berkeley AI tools |
+| `docs/` | Concepts (skills vs MCPs), [workflow guide](docs/workflow-guide.md), [public skills & MCPs list](docs/public-skills-and-mcps.md) |
 | `examples/skills/` | Working skill examples, simplest to most complex |
 | `examples/mcps/` | Working MCP server examples |
 | `examples/python-calling/` | Calling Claude programmatically from Python |
@@ -17,9 +18,9 @@ Part of the [Arkin Lab Hack-a-thon](https://github.com/ArkinLaboratory/handbook/
 
 ## Prerequisites
 
-- [Claude Desktop](https://github.com/ArkinLaboratory/handbook/blob/main/ai-resources/claude-setup.md) installed
+- [Claude Desktop](ai-resources/claude-setup.md) installed
 - For MCP development: Python >= 3.10, [uv](https://docs.astral.sh/uv/getting-started/installation/) package manager
-- For API examples: Anthropic API key or [CBORG API key](https://github.com/ArkinLaboratory/handbook/blob/main/ai-resources/cborg.md)
+- For API examples: Anthropic API key or [CBORG API key](ai-resources/cborg.md)
 
 ## Quick Start
 
