@@ -8,7 +8,7 @@
 ## Install Dependencies
 
 ```bash
-pip install httpx beautifulsoup4 lxml "mcp[cli]"
+pip install httpx beautifulsoup4 lxml pydantic "mcp[cli]"
 ```
 
 ## Run the Server
@@ -26,24 +26,23 @@ python scripts/paperblast_mcp.py --http
 # Starts on http://localhost:8765
 ```
 
-## Configure in Claude Code
+## Register the MCP
 
-Add to `~/.claude/settings.json` or project `.claude/settings.json`:
+After copying files to `~/.claude/skills/paperblast/` (see the main README), register the server:
 
-```json
-{
-  "mcpServers": {
-    "paperblast": {
-      "command": "python",
-      "args": ["/path/to/paperblast-skill/scripts/paperblast_mcp.py"]
-    }
-  }
-}
+```bash
+claude mcp add --scope user paperblast \
+  python3 ~/.claude/skills/paperblast/scripts/paperblast_mcp.py
 ```
 
-## Configure in Cowork
+To verify:
+```bash
+claude mcp list
+```
 
-Install as a skill in `~/.claude/skills/` or the project skills directory.
+## Using in Cowork
+
+If you installed to `~/.claude/skills/paperblast/` and registered with `claude mcp add`, the skill and MCP are automatically available in Cowork sessions.
 
 ## Extending to Other Tools
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Quick diagnostic to verify PaperBLAST MCP server dependencies.
-Run this before adding the server to settings.json.
+Run this before registering the server with claude mcp add.
 
 Usage:
     python3 check_deps.py          # check imports only
@@ -103,9 +103,9 @@ if "--live" in sys.argv:
 # --- Summary ---
 print()
 if errors:
-    print(f"FAILED: {len(errors)} issue(s). Fix the above before adding to settings.json.")
+    print(f"FAILED: {len(errors)} issue(s). Fix the above before registering with claude mcp add.")
     print(f"Quick fix: pip install httpx beautifulsoup4 lxml 'mcp[cli]'")
     sys.exit(1)
 else:
-    print("ALL CHECKS PASSED. Safe to add to settings.json.")
+    print("ALL CHECKS PASSED. Safe to register with: claude mcp add --scope user paperblast python3 ~/.claude/skills/paperblast/scripts/paperblast_mcp.py")
     sys.exit(0)

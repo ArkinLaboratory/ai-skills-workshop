@@ -22,26 +22,27 @@ source .venv/bin/activate  # or `venv\Scripts\activate` on Windows
 pip install -e .
 ```
 
-## Adding to Claude Desktop
+## Adding to Claude
 
-1. Open `~/.config/Claude/claude_desktop_config.json` (macOS/Linux) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
+Register the MCP server using the CLI:
 
-2. Add this to the `mcpServers` object:
-
-```json
-{
-  "mcpServers": {
-    "biology-tools": {
-      "command": "python",
-      "args": ["/full/path/to/examples/mcps/01-hello-world-mcp/server.py"]
-    }
-  }
-}
+```bash
+claude mcp add --scope user biology-tools python /full/path/to/examples/mcps/01-hello-world-mcp/server.py
 ```
 
-3. Restart Claude Desktop
+Replace `/full/path/to` with the actual path where you cloned the workshop repo. Find it with:
 
-4. You should see a "biology-tools" option in the MCP menu (bottom left)
+```bash
+cd examples/mcps/01-hello-world-mcp
+echo "$(pwd)/server.py"
+```
+
+To verify it's registered:
+```bash
+claude mcp list
+```
+
+Restart Claude Desktop, or start a new Claude Code / Cowork session.
 
 ## Testing
 

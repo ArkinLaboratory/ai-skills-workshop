@@ -10,31 +10,37 @@ Download from [claude.ai/download](https://claude.ai/download). Sign in with you
 
 A "skill" is a markdown file that gives Claude specialized instructions. To add one:
 
-1. Find your skills directory:
-   - macOS: `~/Library/Application Support/Claude/`
-   - Create a folder for the skill (e.g., `paperblast-skill/`)
-2. Place the `SKILL.md` file inside
-3. Start a new conversation — Claude will use the skill automatically
+1. Copy the skill to your skills directory:
+   ```bash
+   mkdir -p ~/.claude/skills/my-skill
+   cp SKILL.md ~/.claude/skills/my-skill/
+   ```
+   This works for Claude Code, Cowork, and Claude Desktop.
+2. Start a new conversation — Claude will load the skill automatically
 
 ### Adding MCP Servers
 
 MCP servers give Claude the ability to call external tools (APIs, databases, etc.).
 
-Edit `claude_desktop_config.json`:
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+Use the CLI to register a server:
 
-```json
-{
-  "mcpServers": {
-    "paperblast": {
-      "command": "python",
-      "args": ["/path/to/paperblast-skill/scripts/paperblast_mcp.py"]
-    }
-  }
-}
+```bash
+claude mcp add --scope user my-server python /path/to/server.py
 ```
 
-Restart Claude Desktop after editing.
+This writes the config for you — no manual JSON editing required. The `--scope user` flag makes it available across all your projects.
+
+To see registered servers:
+```bash
+claude mcp list
+```
+
+To remove one:
+```bash
+claude mcp remove --scope user my-server
+```
+
+Restart Claude Desktop after adding or removing servers.
 
 ## 2. Claude Code (command line)
 
@@ -48,18 +54,13 @@ npm install -g @anthropic-ai/claude-code
 claude
 ```
 
-Claude Code reads MCP config from `~/.claude/settings.json` or per-project `.claude/settings.json`:
+Claude Code also uses the same CLI command to register MCP servers:
 
-```json
-{
-  "mcpServers": {
-    "paperblast": {
-      "command": "python",
-      "args": ["/path/to/paperblast-skill/scripts/paperblast_mcp.py"]
-    }
-  }
-}
+```bash
+claude mcp add --scope user my-server python /path/to/server.py
 ```
+
+This works seamlessly across Claude Code, Cowork, and Claude Desktop — no manual config file editing needed.
 
 ## 3. Anthropic API (programmatic)
 

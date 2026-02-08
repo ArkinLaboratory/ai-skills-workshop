@@ -4,12 +4,15 @@ This guide provides real-world examples of how to use each PaperBlast tool for g
 
 ## Tool Overview
 
-The PaperBlast MCP server provides four complementary tools:
+The PaperBlast MCP server provides five complementary tools:
 
 1. **paperblast_search** - Find papers about a specific protein by sequence or identifier
 2. **paperblast_gene_papers** - Get the complete paper list for a gene of interest
 3. **curated_blast_search** - Find characterized enzymes by functional description
 4. **gapmind_check** - Assess metabolic pathway completeness in an organism
+5. **gapmind_list_organisms** - List available organisms for GapMind analysis
+
+All tools return structured JSON conforming to Pydantic output models (defined in `scripts/models.py`). This enables programmatic filtering and sorting of results.
 
 ---
 
@@ -271,6 +274,8 @@ curated_blast_search(
 
 Use `gapmind_check` to assess whether an organism has the genetic capacity for specific metabolic functions.
 
+**Important:** GapMind only has results for pre-computed organisms. Use `gapmind_list_organisms` first to check organism availability. GapMind follows a two-step pattern: first fetch the available organism index to verify your organism exists, then query it.
+
 ### Scenario 1: Amino Acid Biosynthesis Pathways
 
 **User prompt:**
@@ -279,7 +284,8 @@ Use GapMind to check amino acid biosynthesis pathways in Pseudomonas fluorescens
 ```
 
 **What happens:**
-1. Claude calls `gapmind_check` with:
+1. Claude first calls `gapmind_list_organisms` to verify the organism exists in GapMind
+2. Once confirmed, Claude calls `gapmind_check` with:
    - `analysis_type="aa"` (amino acid biosynthesis)
    - `organism="Pseudomonas fluorescens"`
 2. The server queries papers.genomics.lbl.gov/cgi-bin/gapView.cgi
@@ -364,6 +370,8 @@ Summary: 5 confirmed carbon sources, 2 possible, 3 unlikely
 - **Bioremediation screening:** Can this organism degrade pollutant Y?
 - **Bioprocess design:** What carbon sources support growth of strain Z?
 
+Note: Always follow the two-step pattern - use `gapmind_list_organisms` first to verify your organism is available, then call `gapmind_check` for the analysis.
+
 ### Interpreting Confidence Levels
 
 **High Confidence:**
@@ -385,7 +393,7 @@ Summary: 5 confirmed carbon sources, 2 possible, 3 unlikely
 
 ## Example 5: Multi-Tool Research Workflow
 
-Here's a realistic research scenario combining all four tools.
+Here's a realistic research scenario combining all five tools.
 
 ### Scenario: Characterizing an Unknown Protein from Soil Metagenome
 
@@ -511,6 +519,8 @@ paperblast_gene_papers() → Gets full literature for top hit
     ↓
 curated_blast_search() → Finds characterized versions
     ↓
+gapmind_list_organisms() → Verifies organism availability
+    ↓
 gapmind_check() → Predicts whether pathway is complete in likely source organism
     ↓
 Claude synthesizes findings into coherent functional prediction
@@ -567,9 +577,9 @@ Better: "Search for tryptophan synthase (EC 4.2.3.5) in Bacillus"
 ### Handling Limitations
 
 **If papers.genomics.lbl.gov is slow or gives errors:**
-- The server is queryable but may have occasional downtime
-- Try the query again in a few minutes
-- Check network connectivity to LBL (may require VPN from some locations)
+- **Verify you are connected to the LBNL VPN** — papers.genomics.lbl.gov is protected by Cloudflare and requires VPN access. This is not optional; non-LBL IP addresses are blocked. See [VPN setup instructions](https://commons.lbl.gov/spaces/itfaq/pages/132810873/VPN+Information).
+- If VPN is active, the server may have occasional downtime; try the query again in a few minutes
+- Test your VPN connection with `curl -I https://papers.genomics.lbl.gov` — you should see HTTP 200, not 403
 
 **If results look incomplete:**
 - The tools parse HTML from live web pages; formatting can be imperfect
@@ -631,6 +641,7 @@ Try alternative common names
 | `paperblast_gene_papers` | Gene ID from previous search | Complete paper list with snippets | Deep literature review of specific proteins |
 | `curated_blast_search` | Enzyme function + optional organism | Characterized enzymes with evidence | Identifying functional enzymes, pathway design |
 | `gapmind_check` | Pathway type (aa/carbon) + organism | Pathway completeness predictions | Metabolic capability assessment |
+| `gapmind_list_organisms` | Analysis type (aa/carbon) | Available organism index | Checking organism availability before GapMind queries |
 
 ---
 

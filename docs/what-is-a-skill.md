@@ -8,6 +8,8 @@ A **skill** is a markdown file (`SKILL.md`) that gives Claude specialized instru
 2. When you start a conversation, Claude reads the skill and follows its instructions
 3. The skill can tell Claude about domain knowledge, workflow patterns, tools, and constraints
 
+For Claude Code and Cowork, the skills directory is `~/.claude/skills/`. Create a subdirectory for each skill (e.g., `~/.claude/skills/my-skill/SKILL.md`).
+
 ## What a Skill Can Do
 
 - Teach Claude about your lab's specific tools and databases

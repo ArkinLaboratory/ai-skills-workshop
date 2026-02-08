@@ -54,35 +54,61 @@ That's it. The `@mcp.tool()` decorator registers a Python function as something 
 
 ## How to Connect an MCP Server to Claude
 
-### Claude Desktop
+Register your server using the CLI:
 
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "my-server": {
-      "command": "uv",
-      "args": ["run", "--directory", "/path/to/server", "server.py"]
-    }
-  }
-}
+```bash
+claude mcp add --scope user my-server python /path/to/server.py
 ```
 
-### Claude Code
+This works for Claude Code, Cowork, and Claude Desktop. The `--scope user` flag makes the server available across all your projects.
 
-Edit `~/.claude/settings.json` or project `.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "my-server": {
-      "command": "python",
-      "args": ["/path/to/server/server.py"]
-    }
-  }
-}
+To verify it's registered:
+```bash
+claude mcp list
 ```
+
+To remove a server:
+```bash
+claude mcp remove --scope user my-server
+```
+
+After adding or removing a server, restart Claude Desktop (or start a new Claude Code session).
+
+> **Note:** If you need to use `uv` instead of `python` directly, that works too:
+> ```bash
+> claude mcp add --scope user my-server uv run --directory /path/to/server server.py
+> ```
+
+## MCP Scopes: Personal vs Team
+
+MCP servers can be registered at three different scopes:
+
+### `--scope local` (default)
+Personal to you, specific to one project. Config lives in `.claude/settings.local.json`. Not version-controlled. Use for experimental or project-specific tools you don't want to share.
+
+### `--scope project`
+Team-shared. Creates `.mcp.json` in the project root. Commit this to version control. Everyone who clones the repo gets the MCP automatically. **Claude prompts for user approval on first use** (security measure). Best for workshop MCPs and team collaboration.
+
+```bash
+claude mcp add --scope project paperblast python3 scripts/paperblast_mcp.py
+```
+
+### `--scope user`
+Personal, cross-project. Stored in `~/.claude.json`. Available everywhere. Good for personal tools you use across many projects.
+
+### Environment Variables
+
+You can pass environment variables when registering:
+
+```bash
+claude mcp add --scope user my-server --env API_KEY=abc123 python server.py
+```
+
+### For This Hackathon
+
+- Use `--scope project` for shared workshop MCPs that teammates need
+- Use `--scope user` for personal tools you want across projects
+- Commit `.mcp.json` to version control so teammates get the tools automatically
 
 ## Key Concepts
 

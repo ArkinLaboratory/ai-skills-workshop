@@ -10,16 +10,11 @@ Installation:
 Running:
     python server.py
 
-Adding to Claude Desktop:
-    1. Edit ~/.config/Claude/claude_desktop_config.json
-    2. Add to mcpServers:
-       {
-         "my-server": {
-           "command": "python",
-           "args": ["/path/to/server.py"]
-         }
-       }
-    3. Restart Claude Desktop
+Register with Claude:
+    claude mcp add --scope user my-server python /path/to/server.py
+
+Remove:
+    claude mcp remove --scope user my-server
 """
 
 from mcp.server.fastmcp import FastMCP

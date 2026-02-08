@@ -2,15 +2,24 @@
 
 This is the simplest possible skill to teach how Claude can adopt personas and constraints.
 
-## Installation (Claude Desktop - macOS)
+## Installation
+
+### Option A: Claude Code / Cowork (CLI)
+
+```bash
+mkdir -p ~/.claude/skills/haiku-bio
+cp SKILL.md ~/.claude/skills/haiku-bio/
+```
+
+Start a new session — Claude will load the skill automatically.
+
+### Option B: Claude Desktop (GUI)
 
 1. Open Claude Desktop
 2. Click **Claude** menu → **Settings** → **Developer**
 3. Click the folder icon next to "Skills"
 4. Navigate to this directory (`examples/skills/01-hello-world/`)
 5. Select the folder and confirm
-
-Claude Desktop will automatically load `SKILL.md`.
 
 ## What to Expect
 

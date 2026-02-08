@@ -6,77 +6,52 @@
 
 **Time**: 20-30 min to install and test
 
+> **Requires LBNL VPN**: papers.genomics.lbl.gov is protected by Cloudflare and requires an LBL network connection. [VPN setup instructions](https://commons.lbl.gov/spaces/itfaq/pages/132810873/VPN+Information).
+
 ## What's Here
 
 | File | What It Does |
 |------|-------------|
 | `SKILL.md` | Teaches Claude about PaperBLAST, Curated BLAST, and GapMind: when to use each, workflow patterns, query tips |
-| `scripts/paperblast_mcp.py` | MCP server with 4 tools that make HTTP requests to papers.genomics.lbl.gov CGI endpoints and parse HTML responses |
+| `scripts/paperblast_mcp.py` | MCP server with 5 tools that make HTTP requests to papers.genomics.lbl.gov CGI endpoints and parse HTML responses |
 | `scripts/check_deps.py` | Dependency checker — run this first to verify your setup |
 | `scripts/test_parser.py` | Live parser test against a known protein (P0AEZ3 / MinD) |
+| `scripts/models.py` | Pydantic models for structured output (PaperBLASTResult, GapMindResults, GapMindOrganismIndex, etc.) |
+| `INSTALL.md` | Step-by-step installation instructions with dependency verification |
+| `TESTING.md` | Test suite and verification procedures |
+| `USAGE-EXAMPLES.md` | Real-world usage examples and best practices |
+| `pyproject.toml` | Project metadata and build configuration |
 | `references/setup.md` | Detailed setup and extension guide |
 
 ## Tools Exposed
 
-| Tool | Use Case | Input |
-|------|----------|-------|
-| `paperblast_search` | Find papers about a protein | Sequence or identifier (UniProt, RefSeq, VIMSS) |
-| `paperblast_gene_papers` | Get full paper list for a hit | Gene ID from prior search |
-| `curated_blast_search` | Find characterized proteins by function | Functional description + optional genome |
-| `gapmind_check` | Predict metabolic pathway completeness | Analysis type (aa/carbon) + organism |
+| Tool | Use Case | Input | Returns |
+|------|----------|-------|---------|
+| `paperblast_search` | Find papers about a protein | Sequence or identifier (UniProt, RefSeq, VIMSS) + max_hits (default 25) | PaperBLASTResult |
+| `paperblast_gene_papers` | Get full paper list for a hit | detail_id from prior search hit | PaperBLASTResult |
+| `curated_blast_search` | Find characterized proteins by function | Functional description + optional genome | PaperBLASTResult |
+| `gapmind_check` | Predict metabolic pathway completeness | Analysis type (aa/carbon) + organism | GapMindResults or GapMindOrganismIndex |
+| `gapmind_list_organisms` | List available GapMind organisms | Analysis type (aa/carbon) | GapMindOrganismIndex |
 
 ## Setup
 
-### 1. Check dependencies
+See [INSTALL.md](INSTALL.md) for step-by-step installation instructions (dependencies, skill copy, MCP registration, verification).
 
+Quick summary:
 ```bash
-cd examples/skills/02-paperblast/scripts
-python check_deps.py
+pip install httpx beautifulsoup4 lxml pydantic "mcp[cli]"
+mkdir -p ~/.claude/skills/paperblast/scripts
+cp SKILL.md ~/.claude/skills/paperblast/
+cp scripts/paperblast_mcp.py scripts/models.py ~/.claude/skills/paperblast/scripts/
+claude mcp add --scope user paperblast python3 ~/.claude/skills/paperblast/scripts/paperblast_mcp.py
 ```
-
-If anything fails:
-```bash
-pip install httpx beautifulsoup4 lxml "mcp[cli]"
-```
-
-### 2. Test connectivity
-
-```bash
-python check_deps.py --live
-```
-
-This makes a test request to papers.genomics.lbl.gov. If you get a Cloudflare error, connect to LBL VPN.
-
-### 3. Add to Claude Desktop
-
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "paperblast": {
-      "command": "python",
-      "args": ["/full/path/to/02-paperblast/scripts/paperblast_mcp.py"]
-    }
-  }
-}
-```
-
-Copy the `SKILL.md` file and the full `02-paperblast` directory to your Claude skills folder.
-
-Restart Claude Desktop.
-
-### 4. Test it
-
-Ask Claude: "Search PaperBLAST for papers about UniProt P0AEZ3"
-
-Expected: Claude calls `paperblast_search`, gets structured results with homologous proteins and associated papers, and summarizes the findings.
 
 ## What This Teaches
 
 - **Real-world MCP pattern**: Wrapping Perl CGI tools with no JSON API into structured MCP tools
 - **HTML parsing**: Using BeautifulSoup with heuristic pattern matching when there's no clean API
 - **Pydantic validation**: Type-safe input models with field validators
+- **Structured output**: Pydantic output models for machine-readable results
 - **Async HTTP**: Using httpx for non-blocking requests
 - **Error handling**: Graceful degradation when the upstream server is slow or down
 - **Skill + MCP pairing**: The SKILL.md teaches Claude *when* and *how* to use the tools; the MCP server provides the *ability*

@@ -129,20 +129,31 @@ pip install -e .
 # or
 uv pip install -e .
 
-# 3. Add to Claude Desktop configuration
-# Edit: ~/Library/Application Support/Claude/claude_desktop_config.json
-# Add an entry under "mcpServers":
-# "server-name": {
-#   "command": "python",
-#   "args": ["-m", "some_mcp_server"]
-# }
+# 3. Register with Claude
+claude mcp add --scope user server-name python -m some_mcp_server
+# Or if the server has a standalone script:
+claude mcp add --scope user server-name python /path/to/server.py
+
+# 4. Verify
+claude mcp list
+```
+
+### Managing Servers
+
+```bash
+# List registered servers
+claude mcp list
+
+# Remove a server
+claude mcp remove --scope user server-name
 ```
 
 ### Best Practices
 
 - Always check the MCP's README for specific installation requirements and dependencies.
-- Test the MCP locally before adding to your team's Claude Desktop configuration.
-- Keep MCPs in a dedicated directory on your machine (e.g., `~/mcp-servers/`).
+- Test the MCP server locally before registering (`python server.py` should start without errors).
+- Use `--scope user` to make servers available across all projects.
+- Keep MCPs in a dedicated directory on your machine (e.g., `~/mcp-servers/`) or install skill+MCP combos to `~/.claude/skills/`.
 - Document any custom configuration or API keys required in your lab's internal documentation.
 
 ---

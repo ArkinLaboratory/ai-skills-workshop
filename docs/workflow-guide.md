@@ -441,51 +441,27 @@ You should see the server start. It's now listening on stdin/stdout. Press Ctrl+
 
 (If you get import errors like "ModuleNotFoundError: No module named 'mcp'", run the install command again.)
 
-### Step 7: Connect to Claude Desktop
+### Step 7: Register with Claude
 
-Now tell Claude Desktop about your MCP server.
-
-**Find the config file:**
+Register your MCP server:
 
 ```bash
-cat ~/Library/Application\ Support/Claude/claude_desktop_config.json
+claude mcp add --scope user my-first-tool \
+  python "$(pwd)/src/my_first_mcp/server.py"
 ```
 
-If the file doesn't exist, create it:
+The `$(pwd)` gives the absolute path automatically. The `--scope user` flag makes it available across all your projects.
 
+To verify it's registered:
 ```bash
-touch ~/Library/Application\ Support/Claude/claude_desktop_config.json
+claude mcp list
 ```
 
-**Edit the config file** (use your text editor or the command below):
+### Step 8: Restart and Test
 
-Add your server:
-
-```json
-{
-  "mcpServers": {
-    "my-first-tool": {
-      "command": "python",
-      "args": ["/absolute/path/to/my-first-mcp/src/my_first_mcp/server.py"]
-    }
-  }
-}
-```
-
-**Important:** Use the absolute path to your server.py. Find it with:
-
-```bash
-pwd  # in your my-first-mcp directory
-# Then combine this with /src/my_first_mcp/server.py
-```
-
-Example full path: `/Users/yourname/projects/my-first-mcp/src/my_first_mcp/server.py`
-
-### Step 8: Restart Claude Desktop
-
-- Close Claude Desktop completely
-- Open it again
-- Look at the tool icon (usually looks like a wrench or tools icon) to see if your tool appears
+- If using Claude Desktop: close and reopen it
+- If using Claude Code: start a new session (`claude`)
+- If using Cowork: start a new task
 
 ### Step 9: Test Your Tool in Claude
 
@@ -499,9 +475,10 @@ Claude should call your tool and return results.
 ### Troubleshooting
 
 **Tool doesn't appear in Claude:**
-- Check that the path in claude_desktop_config.json is absolute (starts with `/`)
-- Verify the file path is correct by running `ls /path/to/file`
+- Run `claude mcp list` to verify the server is registered
+- Check the path exists: `ls /absolute/path/to/server.py`
 - Restart Claude Desktop (fully close and reopen)
+- If you need to re-register: `claude mcp remove --scope user my-first-tool` then `claude mcp add` again
 
 **"Module not found" errors:**
 - Run `uv pip install -e .` again
@@ -659,7 +636,14 @@ uv pip install -e .
 python src/my_first_mcp/pubmed.py
 ```
 
-**Update claude_desktop_config.json** to point to this new server, then restart Claude Desktop.
+**Register the new server:**
+
+```bash
+claude mcp add --scope user pubmed-search \
+  python "$(pwd)/src/my_first_mcp/pubmed.py"
+```
+
+Restart Claude Desktop or start a new Claude Code session.
 
 **Ask Claude to search:**
 
@@ -840,18 +824,8 @@ For skills:
 For MCPs:
 1. Clone or download this directory
 2. Install: `uv pip install -e .`
-3. Add to claude_desktop_config.json:
-   ```json
-   {
-     "mcpServers": {
-       "my-tool": {
-         "command": "python",
-         "args": ["/path/to/server.py"]
-       }
-     }
-   }
-   ```
-4. Restart Claude Desktop
+3. Register: `claude mcp add --scope user my-tool python /path/to/server.py`
+4. Restart Claude Desktop or start a new Claude Code session
 5. Ask Claude to use the tool
 
 ## Usage
@@ -1107,30 +1081,17 @@ Common issues and solutions:
 
 ### MCP Server Not Appearing in Claude Desktop
 
-**Problem:** You added the server to claude_desktop_config.json, but it doesn't show up in Claude.
+**Problem:** You registered the server with `claude mcp add`, but it doesn't show up in Claude.
 
 **Solutions:**
 
-1. **Check the path is absolute:**
-   ```json
-   {
-     "mcpServers": {
-       "my-tool": {
-         "command": "python",
-         "args": ["/absolute/path/to/server.py"]  // Must start with /
-       }
-     }
-   }
-   ```
+1. **Verify registration:** `claude mcp list` — check that your server appears
 
-2. **Verify the file exists:**
-   ```bash
-   ls /absolute/path/to/server.py
-   ```
+2. **Check the path exists:** `ls /absolute/path/to/server.py`
 
-3. **Restart Claude Desktop:** Fully close and reopen it (don't just close the window).
+3. **Restart Claude Desktop:** Fully close and reopen (don't just close the window)
 
-4. **Check the config file format:** Use a JSON validator (many online tools available) to ensure it's valid.
+4. **Re-register if needed:** `claude mcp remove --scope user my-tool` then `claude mcp add` again
 
 ### Import Error: No Module Named 'mcp'
 
@@ -1283,7 +1244,8 @@ MCP servers use stdio, not ports. This error is rare, but if it occurs:
 | What | Path |
 |:---|:---|
 | Claude skills folder | `~/Library/Application Support/Claude/skills/` |
-| Claude config | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Claude skills | `~/.claude/skills/` |
+| MCP registration | `claude mcp add --scope user <name> <command> [args]` |
 | Workshop repo | Clone from: `git@github.com:ArkinLaboratory/ai-skills-workshop.git` |
 
 ### Commands You'll Use
