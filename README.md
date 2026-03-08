@@ -1,3 +1,7 @@
+![GitHub issues](https://img.shields.io/github/issues/ai)
+![GitHub stars](https://img.shields.io/github/stars/ai)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
 # AI Skills Workshop
 
 Learn to build AI skills and MCP (Model Context Protocol) servers for biological research.
@@ -83,3 +87,14 @@ python examples/python-calling/01-basic-api-call.py
 | BERDL-ENIGMA-CORAL | DuckDB MCP for ENIGMA data | [jmchandonia](https://github.com/jmchandonia/BERDL-ENIGMA-CORAL) |
 | lakehouse-skills | Claude skills for KBase/JGI | [cmungall](https://github.com/cmungall/lakehouse-skills) |
 | lakehouse-chat | NL→SQL chat for BERDL | [justaddcoffee](https://github.com/justaddcoffee/lakehouse-chat) |
+
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
